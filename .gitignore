@@ -1,0 +1,30 @@
+#Ignore quartus auto generated files
+/synthesis/**
+!/synthesis/*.qpf
+!/synthesis/*.qsf
+!/synthesis/*.sdc
+
+#Only keep:
+#	- <module>.vhd (synthesis/Updating design)
+#	- <module>.qip (synthesis)
+#	- <instance>.qip (synthesis)
+#	- <instance>.v (synthesis)
+#	- <module>.vho (simulation)
+/ip/*/*.bsf
+/ip/*/*.cmp
+/ip/*/*.ppf
+/ip/*/*.sip
+/ip/*/*.spd
+/ip/*/*_sim.f
+/ip/*/*_sim/**
+!/ip/*/*_sim/*.vho
+/ip/*/greybox_tmp
+
+#Ignore modelsim auto generated files
+/simulation/work/*
+!/simulation/work/_info
+/simulation/*mti
+/simulation/*.wlf
+
+#Ignore backup files
+/hdl/*.bak
