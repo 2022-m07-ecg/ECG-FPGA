@@ -15,7 +15,6 @@ entity VGA_core is
 		i_wr_req	: in t_WR_REQ;
 		i_valid		: in std_logic;
 		o_ready		: out std_logic;
-		o_active	: out std_logic;
 
 		--VGA interface
 		o_h_sync	: out std_logic;
@@ -41,13 +40,6 @@ begin
 
 	o_v_sync <= w_V_Sync;
 
-	BUFFER_SELECT : process(i_wr_clk)
-	begin
-		if rising_edge(i_wr_clk) then
-			r_Buf_Sel <= i_buf_sel;
-		end if;
-	end process;
-
 	PIXEL_ROUTE : process(w_Pix_1, w_Pix_2, r_Buf_Sel)
 	begin
 		if r_Buf_Sel = '1' then
@@ -57,10 +49,10 @@ begin
 		end if;
 	end process;
 
-	CROSS_DOMAIN : process(i_wr_clk)
+	CROSS_DOMAIN : process(i_rd_clk)
 	begin
-		if rising_edge(i_wr_clk) then
-			r_V_Sync <= w_V_Sync;
+		if rising_edge(i_rd_clk) then
+			r_Buf_Sel <= i_buf_sel;
 		end if;
 	end process;
 
@@ -81,11 +73,9 @@ begin
 		i_wr_req	=> i_wr_req,
 		i_valid		=> i_valid,
 		o_ready		=> o_ready,
-		o_active	=> o_active,
 		o_wr_data	=> w_Wr_Data,
 		o_wr_en		=> w_Wr_En,
-		o_Wr_Addr	=> w_Wr_Addr,
-		i_v_sync	=> r_V_Sync
+		o_Wr_Addr	=> w_Wr_Addr
 	);
 
 	INST_VGA_BUFFER_1 : entity work.VGA_framebuffer(SYN)
@@ -99,7 +89,7 @@ begin
 		data		=> w_Wr_Data,
 		wraddress	=> w_Wr_Addr,
 		wrclock		=> i_wr_clk,
-		wren		=> w_Wr_En and not r_Buf_Sel
+		wren		=> w_Wr_En and not i_buf_sel
 	);
 
 	INST_VGA_BUFFER_2 : entity work.VGA_framebuffer(SYN)
@@ -113,7 +103,7 @@ begin
 		data		=> w_Wr_Data,
 		wraddress	=> w_Wr_Addr,
 		wrclock		=> i_wr_clk,
-		wren		=> w_Wr_En and r_Buf_Sel
+		wren		=> w_Wr_En and i_buf_sel
 	);
 
 end architecture RTL;

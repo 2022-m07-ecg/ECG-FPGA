@@ -4,19 +4,19 @@ use ieee.std_logic_1164.all;
 package VGA_Char_Pkg is
 	
 	constant c_H_ACTIVE	: integer := 640;	--Horizontal screen width
-	constant c_H_FP		: integer := 8;		--Horizontal front porch
-	constant c_H_SP		: integer := 32;	--Horizontal sync width
-	constant c_H_BP		: integer := 40;	--Horizontal back porch
+	constant c_H_FP		: integer := 16;		--Horizontal front porch
+	constant c_H_SP		: integer := 64;	--Horizontal sync width
+	constant c_H_BP		: integer := 80;	--Horizontal back porch
 	constant c_H_TOTAL	: integer := c_H_ACTIVE + c_H_FP + c_H_SP + c_H_BP;
 
 	constant c_V_ACTIVE	: integer := 480;	--Vertical screen height
-	constant c_V_FP		: integer := 1;		--Vertical front porch
-	constant c_V_SP		: integer := 8;		--Vertical sync heigth
-	constant c_V_BP		: integer := 6;		--Vertical back porch
+	constant c_V_FP		: integer := 3;		--Vertical front porch
+	constant c_V_SP		: integer := 4;		--Vertical sync heigth
+	constant c_V_BP		: integer := 13;		--Vertical back porch
 	constant c_V_TOTAL	: integer := c_V_ACTIVE + c_V_FP + c_V_SP + c_V_BP;
 
-	constant c_H_POL		: std_logic := '1';	--Horizontal sync polarity
-	constant c_V_POL		: std_logic := '0';	--Vertical sync polarity
+	constant c_H_POL		: std_logic := '0';	--Horizontal sync polarity
+	constant c_V_POL		: std_logic := '1';	--Vertical sync polarity
 	constant c_BLANK_POL	: std_logic := '0';	--Blank polarity
 
 	constant c_LIB_SIZE	: integer := 47;

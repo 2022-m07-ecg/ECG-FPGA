@@ -14,15 +14,11 @@ entity VGA_loader is
 		i_wr_req	: in t_WR_REQ;
 		i_valid		: in std_logic;
 		o_ready		: out std_logic;
-		o_active	: out std_logic;
 
 		--Buffer interface
 		o_wr_data	: out std_logic_vector(7 downto 0);
 		o_wr_en		: out std_logic;
-		o_wr_addr	: out std_logic_vector(15 downto 0);
-
-		--Timing interface
-		i_v_sync	: in std_logic
+		o_wr_addr	: out std_logic_vector(15 downto 0)
 		);
 end entity VGA_loader;
 
@@ -48,32 +44,20 @@ begin
 			case r_State is
 				when 0 =>
 					o_wr_en <= '0';
-					if i_v_sync = c_V_POL then
-						o_active <= '0';
-						o_ready <= '1';
-						r_H_Offset <= 0;
-						r_V_Offset <= 0;
-						if o_ready = '1' and i_valid = '1' then
-							r_Wr_Req <= i_wr_req;
-							o_Ready <= '0';
-							r_State <= 1;
-						end if;
-					else
-						o_active <= '1';
-						o_ready <= '0';
+					o_ready <= '1';
+					r_H_Offset <= 0;
+					r_V_Offset <= 0;
+					if o_ready = '1' and i_valid = '1' then
+						r_Wr_Req <= i_wr_req;
+						o_Ready <= '0';
+						r_State <= 1;
 					end if;
 				
 				when 1 =>
 					o_ready <= '0';
 					o_wr_en <= '1';
 
-					if i_v_sync = not c_V_POL then
-						r_State <= 0;
-						r_H_Offset <= 0;
-						r_V_Offset <= 0;
-						o_active <= '1';
-						o_wr_en <= '0';
-					elsif r_H_Offset < 2**r_Wr_Req.scale - 1 then
+					if r_H_Offset < 2**r_Wr_Req.scale - 1 then
 						r_H_Offset <= r_H_Offset + 1;
 					elsif r_V_Offset < 10 * 2**r_Wr_Req.scale - 1 then
 						r_H_Offset <= 0;
