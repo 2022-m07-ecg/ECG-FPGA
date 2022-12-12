@@ -25,6 +25,9 @@ end entity ECG_FPGA;
 
 architecture RTL of ECG_FPGA is
 
+	constant c_DATA_RATE : integer := 150;
+	constant c_THRESHOLD : unsigned(11 downto 0) := X"800";
+
 	--VGA signals
 	signal w_VGA_Clk		: std_logic;
 	signal w_VGA_Pix		: std_logic;
@@ -33,6 +36,8 @@ architecture RTL of ECG_FPGA is
 	signal w_VGA_Valid		: std_logic;
 	signal w_VGA_Ready		: std_logic;
 	signal w_VGA_Blank		: std_logic;
+
+	signal w_BPM	: integer range 0 to 999;
 
 begin
 
@@ -50,6 +55,19 @@ begin
 		locked		=> o_pll_status
 	);
 
+	INST_BPM_CALC : entity work.BPM_calculator(RTL)
+	generic map (
+		g_DATA_RATE	=> c_DATA_RATE,
+		g_THRESHOLD	=> c_THRESHOLD
+	)
+	port map (
+		i_clk	=> i_clk,
+		i_rst	=> not i_nrst,
+		i_data	=> (others => '0'),
+		i_valid	=> '0',
+		o_bpm	=> w_BPM
+	);
+
 	INST_VGA_DRIVER : entity work.VGA_driver(RTL)
 	port map (
 		i_clk		=> i_clk,
@@ -59,7 +77,7 @@ begin
 		o_valid		=> w_VGA_Valid,
 		i_ready		=> w_VGA_Ready,
 		i_blank		=> w_VGA_Blank,
-		i_bpm		=> 0,
+		i_bpm		=> w_BPM,
 		i_ecg_valid	=> '0',
 		i_ecg		=> (others => '0')
 	);
