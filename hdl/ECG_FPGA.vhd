@@ -57,7 +57,8 @@ begin
 		data => (others => '0'),
 		rdclk => i_clk,
 		rdreq => '1',
-		wrclk => '0';
+		wrclk => '0',
+		wrreq => '0',
 		q => w_Data,
 		rdempty => w_Empty
 	);
@@ -86,7 +87,7 @@ begin
 		i_clk	=> i_clk,
 		i_rst	=> not i_nrst,
 		i_data	=> w_Data,
-		i_valid	=> r_Data_Valid_Delay
+		i_valid	=> r_Data_Valid_Delay,
 		o_bpm	=> w_BPM
 	);
 
@@ -101,7 +102,7 @@ begin
 		i_blank		=> w_VGA_Blank,
 		i_bpm		=> w_BPM,
 		i_ecg_valid	=> r_Data_Valid_Delay,
-		i_ecg		=> w_Data
+		i_ecg		=> w_Data(4 downto 0)
 	);
 
 	INST_VGA_CORE : entity work.VGA_core(RTL)
