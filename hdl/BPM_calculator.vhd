@@ -24,7 +24,7 @@ architecture RTL of BPM_calculator is
 
 begin
 
-	BPM : process(i_clk)
+	BPM : process(i_clk, i_rst)
 		variable v_Data	: unsigned(11 downto 0);
 	begin
 		if i_rst = '1' then
