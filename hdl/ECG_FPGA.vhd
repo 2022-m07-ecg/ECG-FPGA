@@ -43,6 +43,7 @@ architecture RTL of ECG_FPGA is
 	signal w_Empty	: std_logic;
 	signal r_Data_Valid_Delay	: std_logic := '0';
 	signal w_Cascade_Clk	: std_logic;
+	signal w_Data_Clk	: std_logic;
 
 begin
 
@@ -58,7 +59,7 @@ begin
 		data => (others => '0'),
 		rdclk => i_clk,
 		rdreq => '1',
-		wrclk => '0',
+		wrclk => w_Data_Clk,
 		wrreq => '0',
 		q => w_Data,
 		rdempty => w_Empty
@@ -78,6 +79,16 @@ begin
 		outclk_0	=> w_VGA_Clk,
 		outclk_1	=> w_Cascade_Clk,
 		locked		=> o_pll_status
+	);
+
+	INST_DIVIDER : entity work.data_clock_divider(RTL)
+	generic map (
+		g_DIVIDE_FACTOR => 10E3
+	)
+	port map (
+		i_clk => w_Cascade_Clk,
+		i_rst => not i_nrst,
+		o_clk => w_Data_Clk
 	);
 
 	INST_BPM_CALC : entity work.BPM_calculator(RTL)
