@@ -3,7 +3,7 @@ use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 library work;
 use work.VGA_Char_Pkg.all;
-library pll_50_21;
+library pll;
 
 entity ECG_FPGA is
 	port (
@@ -42,6 +42,7 @@ architecture RTL of ECG_FPGA is
 	signal w_Data	: std_logic_vector(11 downto 0);
 	signal w_Empty	: std_logic;
 	signal r_Data_Valid_Delay	: std_logic := '0';
+	signal w_Cascade_Clk	: std_logic;
 
 begin
 
@@ -66,15 +67,16 @@ begin
 	DELAY : process(i_clk)
 	begin
 		if rising_edge(i_clk) then
-			r_Data_Valid_Delay <= not w_Empty;	
+			r_Data_Valid_Delay <= not w_Empty;
 		end if;
 	end process;
 	
-	INST_PLL_50_21 : entity pll_50_21.PLL_50_21(rtl)
+	INST_PLL : entity pll.PLL(rtl)
 	port map (
 		refclk		=> i_clk,
 		rst			=> not i_nrst,
 		outclk_0	=> w_VGA_Clk,
+		outclk_1	=> w_Cascade_Clk,
 		locked		=> o_pll_status
 	);
 

@@ -1,5 +1,5 @@
 `timescale 1ns/10ps
-module  PLL_50_21_0002(
+module  PLL_0002(
 
 	// interface 'refclk'
 	input wire refclk,
@@ -10,19 +10,22 @@ module  PLL_50_21_0002(
 	// interface 'outclk0'
 	output wire outclk_0,
 
+	// interface 'outclk1'
+	output wire outclk_1,
+
 	// interface 'locked'
 	output wire locked
 );
 
 	altera_pll #(
-		.fractional_vco_multiplier("true"),
+		.fractional_vco_multiplier("false"),
 		.reference_clock_frequency("50.0 MHz"),
 		.operation_mode("direct"),
-		.number_of_clocks(1),
+		.number_of_clocks(2),
 		.output_clock_frequency0("23.750000 MHz"),
 		.phase_shift0("0 ps"),
 		.duty_cycle0(50),
-		.output_clock_frequency1("0 MHz"),
+		.output_clock_frequency1("1.500000 MHz"),
 		.phase_shift1("0 ps"),
 		.duty_cycle1(50),
 		.output_clock_frequency2("0 MHz"),
@@ -77,7 +80,7 @@ module  PLL_50_21_0002(
 		.pll_subtype("General")
 	) altera_pll_i (
 		.rst	(rst),
-		.outclk	({outclk_0}),
+		.outclk	({outclk_1, outclk_0}),
 		.locked	(locked),
 		.fboutclk	( ),
 		.fbclk	(1'b0),
