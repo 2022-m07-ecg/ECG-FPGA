@@ -34,35 +34,14 @@ architecture RTL of ECG_FPGA is
 	signal w_VGA_Ready		: std_logic;
 	signal w_VGA_Blank		: std_logic;
 
-	signal r_BPM	: integer range 0 to 999 := 0;
-	signal r_BPM_Count : integer range 0 to 50E6 := 0;
-
 begin
 
 	o_vga_red	<= (others => w_VGA_Pix);
 	o_vga_green	<= (others => w_VGA_Pix);
 	o_vga_blue	<= (others => w_VGA_Pix);
-	o_vga_clk	<= w_VGA_Clk;
+	o_vga_clk	<= w_VGA_Clk;	
 	o_vga_blank <= w_VGA_Blank;
 
-	process(i_clk, i_nrst)
-	begin
-		if i_nrst = '0' then
-			r_BPM_Count <= 0;
-			r_BPM <= 0;
-		elsif rising_edge(i_clk) then
-			if r_BPM_Count < 50E6 then
-				r_BPM_Count <= r_BPM_Count + 1;
-			elsif r_BPM < 999 then
-				r_BPM_Count <= 0;
-				r_BPM <= r_BPM + 1;
-			else
-				r_BPM_Count <= 0;
-				r_BPM <= 0;
-			end if;
-		end if;
-	end process;
-	
 	INST_PLL_50_21 : entity pll_50_21.PLL_50_21(rtl)
 	port map(
 		refclk		=> i_clk,
@@ -80,7 +59,7 @@ begin
 		o_valid		=> w_VGA_Valid,
 		i_ready		=> w_VGA_Ready,
 		i_blank		=> w_VGA_Blank,
-		i_bpm		=> r_BPM,
+		i_bpm		=> 0,
 		i_ecg_valid	=> '0',
 		i_ecg		=> (others => '0')
 	);
