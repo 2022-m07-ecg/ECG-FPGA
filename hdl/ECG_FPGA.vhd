@@ -80,7 +80,9 @@ begin
 		o_valid		=> w_VGA_Valid,
 		i_ready		=> w_VGA_Ready,
 		i_blank		=> w_VGA_Blank,
-		i_bpm		=> r_BPM
+		i_bpm		=> r_BPM,
+		i_ecg_valid	=> '0',
+		i_ecg		=> (others => '0')
 	);
 
 	INST_VGA_CORE : entity work.VGA_core(RTL)

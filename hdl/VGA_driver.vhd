@@ -14,14 +14,16 @@ entity VGA_driver is
 		i_ready		: in std_logic;
 		i_blank 	: in std_logic;
 		
-		i_bpm	: in integer range 0 to 999
+		i_bpm		: in integer range 0 to 999;
+		i_ecg_valid	: in std_logic;
+		i_ecg		: in std_logic_vector(4 downto 0)
 	);
 end VGA_driver;
 
 architecture RTL of VGA_driver is
 	
 	constant c_MESSAGE : string := "MO7 ECG GROUP 2";
-	constant c_SECTIONS : integer := 6;
+	constant c_SECTIONS : integer := 7;
 	signal r_Section : integer range 0 to c_SECTIONS := 0;
 
 	signal r_Count : integer := 0;
@@ -32,13 +34,17 @@ architecture RTL of VGA_driver is
 		2 => 28,
 		3 => 26,
 		4 => c_MESSAGE'length,
-		5 => 3
+		5 => 3,
+		6 => 80
 	);
 
 	type t_BCD is array(2 downto 0) of integer range 0 to 9;
 	signal r_BPM : integer range 0 to 999 := 0;
 	signal w_BPM_BCD : t_BCD;
 
+	type t_ECG is array(0 to c_H_ACTIVE/8 - 1) of unsigned(4 downto 0);
+	signal r_ECG_Staged	: t_ECG := (others => "10000");	--Constantly get updated with new data
+	signal r_ECG_Active	: t_ECG := (others => "10000");	--Only get updated before starting new frame
 
 begin
 
@@ -63,6 +69,7 @@ begin
 				o_valid <= '0';
 				if i_ready = '1' and i_blank  = c_BLANK_POL then
 					r_BPM <= i_BPM;
+					r_ECG_Active <= r_ECG_Staged;
 					o_buf_sel <= not o_buf_sel;
 					r_Section <= 0;
 				end if;
@@ -70,7 +77,7 @@ begin
 		end if;
 	end process;
 
-	DATAPATH : process(r_Section, r_Count, w_BPM_BCD)
+	DATAPATH : process(r_Section, r_Count, w_BPM_BCD, r_ECG_Active)
 	begin
 		case r_Section  is
 		when 0 =>
@@ -115,6 +122,11 @@ begin
 			o_wr_req.scale <= 3;
 			o_wr_req.h_addr <= 432 + r_Count*64;
 			o_wr_req.v_addr <= 20;
+		when 6 =>
+			o_wr_req.sel <= 43;
+			o_wr_req.scale <= 0;
+			o_wr_req.h_addr <= r_Count*8;
+			o_wr_req.v_addr <= 150 + (31 - to_integer(r_ECG_Active(r_Count)) )*10;
 		when others =>
 			o_wr_req.sel <= 0;
 			o_wr_req.scale <= 0;
@@ -131,6 +143,20 @@ begin
 			w_BPM_BCD(i) <= v_Inter / 10**i;
 			v_Inter := v_Inter mod 10**i;
 		end loop;
+	end process;
+
+	ECG_SHIFT : process(i_clk, i_rst)
+	begin
+		if i_rst = '1' then
+			r_ECG_Staged <= (others => "10000");
+		elsif rising_edge(i_clk) then
+			if i_ecg_valid = '1' then
+				for i in 0 to c_H_ACTIVE/8 - 2 loop
+					r_ECG_Staged(i) <= r_ECG_Staged(i+1);
+				end loop;
+				r_ECG_Staged(c_H_ACTIVE/8 - 1) <= unsigned(i_ecg);
+			end if;
+		end if;
 	end process;
 
 end architecture RTL;
