@@ -23,7 +23,7 @@ end VGA_driver;
 architecture RTL of VGA_driver is
 	
 	constant c_MESSAGE : string := "MO7 ECG GROUP 2";
-	constant c_SECTIONS : integer := 7;
+	constant c_SECTIONS : integer := 8;
 	signal r_Section : integer range 0 to c_SECTIONS := 0;
 
 	signal r_Count : integer := 0;
@@ -35,7 +35,8 @@ architecture RTL of VGA_driver is
 		3 => 26,
 		4 => c_MESSAGE'length,
 		5 => 3,
-		6 => 80
+		6 => 40,
+		7 => 80
 	);
 
 	type t_BCD is array(2 downto 0) of integer range 0 to 9;
@@ -123,6 +124,11 @@ begin
 			o_wr_req.h_addr <= 432 + r_Count*64;
 			o_wr_req.v_addr <= 20;
 		when 6 =>
+			o_wr_req.sel <= 46;
+			o_wr_req.scale <= 3;
+			o_wr_req.h_addr <= (r_Count mod 10)*64;
+			o_wr_req.v_addr <= 150 + (r_Count / 10)*80;
+		when 7 =>
 			o_wr_req.sel <= 43;
 			o_wr_req.scale <= 0;
 			o_wr_req.h_addr <= r_Count*8;
