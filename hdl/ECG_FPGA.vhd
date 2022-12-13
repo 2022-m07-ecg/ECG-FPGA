@@ -25,7 +25,7 @@ end entity ECG_FPGA;
 
 architecture RTL of ECG_FPGA is
 
-	constant c_DATA_RATE : integer := 150;
+	constant c_DATA_RATE : integer := 1000;
 	constant c_THRESHOLD : unsigned(11 downto 0) := X"800";
 
 	--VGA signals
@@ -43,7 +43,7 @@ architecture RTL of ECG_FPGA is
 	signal w_Empty	: std_logic;
 	signal r_Data_Valid_Delay	: std_logic := '0';
 	signal w_Cascade_Clk	: std_logic;
-	signal w_Data_Clk	: std_logic;	--Use this as input data clock
+	signal w_Data_Clk	: std_logic;	--Use this as 1kHz input data clock
 	signal w_Input_Data : std_logic_vector(11 downto 0);	--Assign filter data to this wire
 
 begin
@@ -84,7 +84,7 @@ begin
 
 	INST_DIVIDER : entity work.data_clock_divider(RTL)
 	generic map (
-		g_DIVIDE_FACTOR => 10E3
+		g_DIVIDE_FACTOR => 1E3
 	)
 	port map (
 		i_clk => w_Cascade_Clk,
