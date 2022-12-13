@@ -43,8 +43,8 @@ architecture RTL of ECG_FPGA is
 	signal w_Empty	: std_logic;
 	signal r_Data_Valid_Delay	: std_logic := '0';
 	signal w_Cascade_Clk	: std_logic;
-	signal w_Data_Clk	: std_logic;
-	signal w_Input_Data : std_logic_vector(11 downto 0);
+	signal w_Data_Clk	: std_logic;	--Use this as input data clock
+	signal w_Input_Data : std_logic_vector(11 downto 0);	--Assign filter data to this wire
 
 begin
 
@@ -53,13 +53,6 @@ begin
 	o_vga_blue	<= (others => w_VGA_Pix);
 	o_vga_clk	<= w_VGA_Clk;	
 	o_vga_blank <= w_VGA_Blank;
-
-	INST_INPUT : entity work.input_sim(RTL)
-	port map (
-		i_clk => w_Data_Clk,
-		i_rst => not i_nrst,
-		o_data => w_Input_Data
-	);
 
 	INST_FIFO : entity work.FIFO(SYN)
 	port map (
