@@ -123,7 +123,7 @@ begin
 		i_blank		=> w_VGA_Blank,
 		i_bpm		=> w_BPM,
 		i_ecg_valid	=> r_Data_Valid_Delay,
-		i_ecg		=> w_Data(4 downto 0)
+		i_ecg		=> w_Data(11 downto 7)
 	);
 
 	INST_VGA_CORE : entity work.VGA_core(RTL)
