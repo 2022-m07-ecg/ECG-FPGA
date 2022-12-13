@@ -45,7 +45,7 @@ begin
 						r_Max <= v_Data;
 					else
 						r_State <= 2;
-						o_bpm <= 60 / (r_Count*g_DATA_RATE);
+						o_bpm <= (60*g_DATA_RATE) / r_Count;
 						r_Count <= 0;
 					end if;
 				when 2 =>
