@@ -3,6 +3,7 @@
 !/synthesis/*.qpf
 !/synthesis/*.qsf
 !/synthesis/*.sdc
+!/synthesis/*.qsys
 
 #Only keep:
 #	- <module>.vhd (synthesis/Updating design)
