@@ -29,3 +29,6 @@
 
 #Ignore backup files
 /hdl/*.bak
+
+#Ignore shell scripts
+!*.sh
