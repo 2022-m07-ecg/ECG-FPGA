@@ -110,7 +110,7 @@ architecture RTL of ECG_FPGA is
 	signal r_Data_Valid_Delay	: std_logic := '0';
 	signal w_Cascade_Clk	: std_logic;
 	signal w_Data_Clk	: std_logic;	--Use this as 1kHz input data clock
-	signal w_Input_Data : std_logic_vector(11 downto 0);	--Assign filter data to this wire
+	signal w_Input_Data : std_logic_vector(11 downto 0) := "100000000000";	--Assign filter data to this wire
 
 	component system is
 		port (
