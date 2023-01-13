@@ -339,7 +339,7 @@ begin
 			memory_mem_odt					=> o_memory_mem_odt,
 			memory_mem_dm					=> o_memory_mem_dm,
 			memory_oct_rzqin				=> i_memory_oct_rzqin,
-			data_input_export				=> w_Data & r_Data_Valid_Delay,
+			data_input_export				=> r_Data_Valid_Delay & w_Data,
 			reset_reset_n					=> i_nrst
 		);
 
